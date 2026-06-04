@@ -1,30 +1,48 @@
-# MediaPipe 手勢辨識 - 手動繪製骨架範例
+# MediaPipe 手勢辨識 — 手動繪製骨架練習
 
-## 專案總覽
+> 用 MediaPipe Tasks API 做手勢辨識，並用 OpenCV 手動畫骨架（不依賴 `drawing_utils`）。
 
-本專案包含一個 Python 腳本 (`work1.py`) 和一個 MediaPipe 手勢辨識模型 (`gesture_recognizer.task`)。其主要目的是展示如何使用 MediaPipe `tasks` API 進行即時手勢辨識，並完全透過 OpenCV 手動繪製出手部的骨架和關節點。
+**Author**: [@Lee-unhn](https://github.com/Lee-unhn) · a2264563@gmail.com  
+**Status**: 學習專案 / Learning Project
 
----
+## 專案簡介
 
-## 主要功能與技術特點
+本專案包含一個 Python 腳本 (`work1.py`) 和一個 MediaPipe 手勢辨識模型 (`gesture_recognizer.task`)。重點是練習如何用 MediaPipe `tasks` API 做即時手勢辨識，並**完全透過 OpenCV 手動繪製手部骨架與關節點**，不依賴 `mediapipe.solutions.drawing_utils`（在不同版本間可能有差異）。
 
-*   **現代化 MediaPipe API**: 使用 `mediapipe.tasks.vision.GestureRecognizer`，這是目前官方推薦的 API，並以 `VIDEO` 串流模式運行。
-*   **手動骨架繪製**:
-    *   本專案的**核心亮點**是不依賴 `mediapipe.solutions.drawing_utils` 這個可能在不同版本間存在差異的繪圖工具。
-    *   它展示了如何自行定義 `HAND_CONNECTIONS` (手部關節連線)。
-    *   透過迭代模型輸出的手部地標 (landmarks)，計算其在畫面上的實際像素座標。
-    *   使用 OpenCV 的 `cv2.line` 函式繪製骨架連線，並用 `cv2.circle` 函式標示關節點。
-*   **即時結果呈現**: 在畫面上即時顯示辨識出的手勢名稱，例如 "Victory", "Open_Palm" 等。
+核心練習點：
 
----
+- 使用 `mediapipe.tasks.vision.GestureRecognizer` 以 `VIDEO` 串流模式運行
+- 自行定義 `HAND_CONNECTIONS`（手部關節連線）
+- 把模型輸出的 landmarks 轉換為畫面實際像素座標
+- 用 `cv2.line` 畫骨架、`cv2.circle` 標關節點
+- 即時顯示手勢名稱（如 "Victory"、"Open_Palm"）
 
-## 專案目的
+## 架構
 
-對於希望完全客製化手部骨架視覺效果，或者在 `drawing_utils` 不可用或不適用的環境中進行開發的開發者來說，這個腳本提供了一個清晰、可行的解決方案。它讓開發者能完全掌控骨架的顏色、粗細、樣式等視覺元素。
+```mermaid
+flowchart LR
+    A[攝影機] --> B[OpenCV VideoCapture]
+    B --> C[MediaPipe GestureRecognizer<br/>VIDEO mode]
+    C --> D[手部 landmarks]
+    D --> E[座標轉像素]
+    E --> F[cv2.line 畫骨架<br/>cv2.circle 標關節]
+    C --> G[手勢標籤<br/>Victory / Open_Palm ...]
+    F --> H[OpenCV imshow]
+    G --> H
+```
 
----
+## 技術棧
 
-## 環境設置與執行
+- Python 3.8+
+- MediaPipe (`mediapipe.tasks.vision.GestureRecognizer`)
+- OpenCV
+
+## 主要檔案
+
+- `work1.py` — 主腳本
+- `gesture_recognizer.task` — MediaPipe 預訓練手勢模型
+
+## 使用 / Usage
 
 ### 1. 前置條件
 *   Python 3.8 或更高版本。
@@ -49,3 +67,7 @@ pip install mediapipe opencv-python
 python work1.py
 ```
 程式會開啟一個顯示攝影機畫面的視窗，並在您的手部出現時繪製出手部骨架。在命令列視窗按下 `q` 鍵可關閉程式。
+
+## 備註
+
+本專案為 AI 視覺應用學習練習，模型路徑與部分設定可能為硬編碼。如要重現請依 README 調整。
